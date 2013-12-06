@@ -4,12 +4,13 @@ var fs      = require('fs'),
 		d3      = require('d3');
 
 var css = '<style>.area {fill: steelblue;}.line {fill: none;stroke: #000;stroke-width: 1px;}</style>',
-		htmlStub = '<html><head>' + css + '</head><body><div id="chart"></div><script src="js/thirdparty/d3.v3.min.js"></script></body></html>'
+		htmlStub = '<html><head>' + css + '</head><body></div><script src="js/thirdparty/d3.v3.min.js"></script></body></html>',
+    document;
 
-function loadPage(window, port){
+function loadPage(port){
 	port = ((port) ? port : 8080);
 
-	var page = window.document.documentElement.innerHTML;
+	var page = document.documentElement.innerHTML;
 	fs.writeFileSync(__dirname + '/tmp/index.html', page);
 
 	var app = connect().use(connect.static(__dirname + '/tmp'));
@@ -17,34 +18,22 @@ function loadPage(window, port){
 	console.log('Running on 0.0.0.0:' + port)
 }
 
-function timeSeriesChart(opts){
-	var data  = opts.data,
-	    x_val = opts.x,
-	    y_val = opts.y;
+function createJsDom(){
+  var doc = jsdom.html(htmlStub, null, { 
+      features: { 
+          QuerySelector : true
+      }
+    }); 
 
-	jsdom.env({ 
-		features: { QuerySelector : true }, 
-		html: htmlStub, 
-		done: function(errors, window) {
-
-			var formatDate = d3.time.format("%b %Y");
-			d3.select(window.document.querySelector("#chart"))
-			    .datum(data)
-			  .call(timeSeriesChartCreate()
-			    .x(function(d) { return formatDate.parse(d[x_val]); })
-			    .y(function(d) { return +d[y_val]; }));
-
-			loadPage(window);
-
-		}
-	})
-
-
-
-
+  return doc; 
 }
 
-function timeSeriesChartCreate() {
+function makeD3Selection(){
+  document = createJsDom();
+  return d3.select(document.querySelector("body"))
+}
+
+function timeSeriesChart() {
   var margin = {top: 20, right: 20, bottom: 20, left: 20},
       width = 760,
       height = 120,
@@ -151,5 +140,7 @@ function timeSeriesChartCreate() {
 }
 
 module.exports = {
-	timeSeriesChart: timeSeriesChart
+  timeSeriesChart: timeSeriesChart,
+	selection: makeD3Selection,
+  load: loadPage
 }

@@ -1,12 +1,15 @@
 var fs         = require('fs'),
 		d3         = require('d3'),
-		tt         = require('./toast-and-tea.js'),
-		timeseries = require('./js/timeseries.js');
+		tt         = require('./toast-and-tea.js');
 
 var data = d3.csv.parse(fs.readFileSync('sp500.csv').toString());
 
-tt.timeSeriesChart({
-	data: data,
-	x: 'date',
-	y: 'price'
-})
+var formatDate = d3.time.format("%b %Y");
+
+tt.selection()
+		.datum(data)
+  .call(tt.timeSeriesChart()
+    .x(function(d) { return formatDate.parse(d.date); })
+    .y(function(d) { return +d.price; }));
+
+tt.load()
