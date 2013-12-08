@@ -34,6 +34,3 @@ var chart2 = function() {
 }
 
 tt.load([chart1, chart2])
-
-
-// tt.load()

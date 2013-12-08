@@ -6,7 +6,7 @@ var fs          = require('fs'),
 
 var htmlTemplateFactory = _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><script src="js/thirdparty/d3.v3.min.js"></script><script src="js/timeseries.js"></script><script><%= script %></script></body></html>');
 
-function load(chart_fns, port){
+function startTheShow(chart_fns, port){
 
   writeData(chart_fns);
   var script = createJs(chart_fns);
@@ -82,5 +82,5 @@ function startServer(port){
 
 
 module.exports = {
-  load: load
+  load: startTheShow
 }
