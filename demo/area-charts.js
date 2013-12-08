@@ -5,7 +5,7 @@ var fs         = require('fs'),
 var sp500 = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 
 
-var chart1 = function() {
+var area_chart_1 = function() {
 	return {sp500: sp500};
 
 	var formatDate = d3.time.format("%b %Y");
@@ -19,7 +19,7 @@ var chart1 = function() {
 
 }
 
-var chart2 = function() {
+var area_chart_2 = function() {
 	return {sp500: sp500};
 
 	var formatDate = d3.time.format("%b %Y");
@@ -33,4 +33,4 @@ var chart2 = function() {
 
 }
 
-tt.load([chart1, chart2])
+tt.load([area_chart_1, area_chart_2])
