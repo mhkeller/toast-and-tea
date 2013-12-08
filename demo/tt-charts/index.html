@@ -1,0 +1,54 @@
+<html>
+  
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/chart.css">
+  </head>
+  
+  <body>
+    <script src="js/thirdparty/d3.v3.min.js"></script>
+    <script src="js/timeseries.js"></script>
+    <script>
+      (function() {
+        d3.json("./data/sp500.json", function(error, sp500) {
+      
+          var formatDate = d3.time.format("%b %Y");
+      
+          d3.select('body')
+            .datum(sp500)
+            .call(timeSeriesChart()
+              .x(function(d) {
+                return formatDate.parse(d.date);
+              })
+              .y(function(d) {
+                return +d.price;
+              }))
+            .on('mouseover', function(d) {
+              console.log(d)
+            })
+      
+        })
+      })();
+      (function() {
+        d3.json("./data/sp500.json", function(error, sp500) {
+      
+          var formatDate = d3.time.format("%b %Y");
+      
+          d3.select('body')
+            .datum(sp500)
+            .call(timeSeriesChart()
+              .x(function(d) {
+                return formatDate.parse(d.date);
+              })
+              .y(function(d) {
+                return +d.other;
+              }))
+            .on('mouseover', function(d) {
+              console.log(d)
+            })
+      
+        })
+      })();
+    </script>
+  </body>
+
+</html>
