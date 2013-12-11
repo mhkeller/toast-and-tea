@@ -6,8 +6,32 @@ var fs          = require('fs'),
 
 var htmlTemplateFactory = _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><script src="js/thirdparty/d3.v3.min.js"></script><script src="js/timeseries.js"></script><script><%= script %></script></body></html>');
 
-function startTheShow(chart_fns, port){
+function createChartObject(){
+  var description = '',
+      data_name = '',
+      data_value = {};
 
+  function chart() { };
+
+  chart.data = function(data_name_val, data_val) {
+    if (!arguments.length) return {name: data_name, data: data_value};
+    data_value = data_val;
+    data_name  = data_name_val;
+    return chart;
+  };
+
+  chart.desc = function(value) {
+    if (!arguments.length) return description;
+    description = value;
+    return chart;
+  };
+
+  return chart;
+}
+
+
+
+function startTheShow(chart_fns, port){
   writeData(chart_fns);
   var script = createJs(chart_fns);
   createIndexFile(script);
@@ -16,7 +40,7 @@ function startTheShow(chart_fns, port){
 
 function writeData(chart_fns){
   if (typeof chart_fns == 'function'){
-    writeDataToFile(chart_fns)
+    writeDataToFile(chart_fns);
   }else if (typeof chart_fns == 'object'){
     _.each(chart_fns, function(chart_fn){
       writeDataToFile(chart_fn);
@@ -25,15 +49,18 @@ function writeData(chart_fns){
 }
 
 function writeDataToFile(chart_fn){
-  _.each(chart_fn(), function(data, name){
-    writeToFile('data', name, data)
-  });
+  var data_info   = chart_fn().data(),
+      data_name   = data_info.name,
+      data_object = data_info.data;
+
+  writeToFile('data', data_name, data_object);
 }
 
 // Load the data externally
 function frontendifyJs(fn){
-  var data_name = _.keys(fn())[0];
-  var fn_string = fn.toString()
+  var data_name = fn().data().name,
+      fn_string = fn.toString()
+                    .replace(/\.chart\(\)\n*((\s*\..*\n)+)/, '')
                     .replace(/return.*/, 'd3.json("./data/'+data_name+'.json", function(error, '+data_name+') {');
 
   return '(' + fn_string + ')})();';
@@ -82,5 +109,6 @@ function startServer(port){
 
 
 module.exports = {
-  load: startTheShow
+  load: startTheShow,
+  chart: createChartObject
 }
