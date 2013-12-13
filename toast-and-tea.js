@@ -85,6 +85,10 @@ function writeToFile(dir, name, data){
     fs.mkdirSync('./tt-charts/data');
     fs.mkdirSync('./tt-charts/js');
     fs.mkdirSync('./tt-charts/js/thirdparty');
+    fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js', fs.readFileSync(__dirname + '/assets/js/thirdparty/jquery-1.10.2.min.js'))
+    fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js', fs.readFileSync(__dirname + '/assets/js/thirdparty/miso.ds.deps.ie.0.4.1..js'))
+    fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js', fs.readFileSync(__dirname + '/assets/js/thirdparty/highcharts.js'))
+    fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js', fs.readFileSync(__dirname + '/assets/js/thirdparty/all-my-charts.js'))
     fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js', fs.readFileSync(__dirname + '/assets/js/thirdparty/d3.v3.min.js'))
     fs.writeFileSync('./tt-charts/js/timeseries.js',           fs.readFileSync(__dirname + '/assets/js/timeseries.js'))
     fs.writeFileSync('./tt-charts/css/chart.css',              fs.readFileSync(__dirname + '/assets/css/chart.css'))
