@@ -165,20 +165,24 @@
                       month: '%b \'%y',
                       year: '%Y'
                     }
-          },
-          categorical = {
+          };
+
+       var categorical = {
             categories: [col]
-          },
-          default_x_info = {
+          };
+
+       var default_x_info = {
             tickColor: '#e3e3e3',
             lineColor: '#e3e3e3'
           };
 
       if (type == 'datetime'){
         return _.extend(datetime, default_x_info);
-      }else{
+      }else if (type == 'categorical'){
         return _.extend(categorical, default_x_info);
-      };
+      }else if (type == 'scatter'){
+        return default_x_info
+      }
     };
 
     function makeHighchart(series_data, x_axis_info, chart_settings, $ctnr, json_chart_callback){
@@ -189,9 +193,19 @@
         }
       });
 
+      var type = function(){
+        if (chart_settings.chart_type == 'datetime'){
+          return 'line'
+        }else if (chart_settings.chart_type == 'categorical'){
+          return 'column'
+        }else{
+          return 'scatter'
+        }
+      }
+
       $ctnr.highcharts({
           chart: {
-              type: (chart_settings.chart_type == 'datetime' ? 'line' : 'column')
+              type: 'scatter'
           },
           title: {
               text: chart_settings.title,
