@@ -1,6 +1,7 @@
 (function ( $ ) {
 
   $.fn.allMyCharts = function ( options , callback) {
+    console.log('all my charts')
     var chart_settings = $.extend({
         // These are the defaults.
         data_format: 'json',
@@ -299,6 +300,7 @@
           json_chart_callback('Chart created');
         }
         catch(err){
+          console.log(err)
           alert("Error: Try selecting fewer bins or smaller breaks.");
         }
       },
