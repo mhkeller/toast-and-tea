@@ -39,6 +39,7 @@ label {
   right: 10px;
 }
 .chart{
-  width: 100%;
-  height: 500px;
+  width: 100% !important;
+  height: 500px !important;
+  margin-bottom: 50px;
 }

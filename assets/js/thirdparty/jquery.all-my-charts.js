@@ -1,7 +1,7 @@
 (function ( $ ) {
 
   $.fn.allMyCharts = function ( options , callback) {
-     var chart_settings = $.extend({
+    var chart_settings = $.extend({
         // These are the defaults.
         data_format: 'json',
         delimiter: ',',

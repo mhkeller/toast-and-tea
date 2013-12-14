@@ -4,7 +4,7 @@ var fs          = require('fs'),
 		connect     = require('connect'),
     _           = require('underscore');
 
-var htmlTemplateFactory = _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><div id="chart" class="chart"></div><script src="js/thirdparty/jquery-1.10.2.min.js"></script><script src="js/thirdparty/highcharts.js"></script><script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script><script src="js/thirdparty/jquery.all-my-charts.js"></script><script><%= script %></script></body></html>');
+var htmlTemplateFactory = _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><%= divs %><script src="js/thirdparty/jquery-1.10.2.min.js"></script><script src="js/thirdparty/highcharts.js"></script><script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script><script src="js/thirdparty/jquery.all-my-charts.js"></script><script><%= script %></script></body></html>');
 
 function createChartObject(){
   var description = '',
@@ -29,12 +29,11 @@ function createChartObject(){
   return chart;
 }
 
-
-
 function startTheShow(chart_fns, port){
   writeData(chart_fns);
+  var divs   = createDivs(chart_fns);
   var script = createJs(chart_fns);
-  createIndexFile(script);
+  createIndexFile(divs, script);
   startServer(port);
 }
 
@@ -66,6 +65,26 @@ function frontendifyJs(fn){
   return '(' + fn_string + ')})();';
 } 
 
+function getDiv(fn){
+  var fn_string = fn.toString(),
+      selector  = fn_string.match(/^.*\.allMyCharts/m)[0].match(/(\'|\").+(\'|\")/)[0].replace(/(\'|\")/g, ''),
+      prefix    = ((selector[0] == '#') ? 'id' : 'class'),
+      div       = '<div ' + prefix + '="' + selector.slice(1) + ((prefix != 'id') ? ' chart' : '" class="chart') + '"></div>';
+
+  return div;
+}
+
+function createDivs(chart_fns){
+  var div;
+  if (typeof chart_fns == 'function'){
+    div = getDiv(chart_fns);
+  }else if (typeof chart_fns == 'object'){
+    div = _.map(chart_fns, function(chart_fn){ return getDiv(chart_fn) }).join('\n');
+  }
+  
+  return div;
+}
+
 function createJs(chart_fns){
   var script;
 
@@ -85,21 +104,20 @@ function writeToFile(dir, name, data){
     fs.mkdirSync('./tt-charts/data');
     fs.mkdirSync('./tt-charts/js');
     fs.mkdirSync('./tt-charts/js/thirdparty');
-    fs.writeFileSync('./tt-charts/js/thirdparty/jquery-1.10.2.min.js',        fs.readFileSync(__dirname + '/assets/js/thirdparty/jquery-1.10.2.min.js'))
-    fs.writeFileSync('./tt-charts/js/thirdparty/miso.ds.deps.ie.0.4.1.js',    fs.readFileSync(__dirname + '/assets/js/thirdparty/miso.ds.deps.ie.0.4.1.js'))
-    fs.writeFileSync('./tt-charts/js/thirdparty/highcharts.js',               fs.readFileSync(__dirname + '/assets/js/thirdparty/highcharts.js'))
-    fs.writeFileSync('./tt-charts/js/thirdparty/jquery.all-my-charts.js',     fs.readFileSync(__dirname + '/assets/js/thirdparty/jquery.all-my-charts.js'))
-    fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js',                fs.readFileSync(__dirname + '/assets/js/thirdparty/d3.v3.min.js'))
-    fs.writeFileSync('./tt-charts/js/thirdparty/timeseries.js',               fs.readFileSync(__dirname + '/assets/js/thirdparty/timeseries.js'))
-    fs.writeFileSync('./tt-charts/css/chart.css',                             fs.readFileSync(__dirname + '/assets/css/chart.css'))
+    fs.writeFileSync('./tt-charts/css/chart.css', fs.readFileSync(__dirname + '/assets/css/chart.css'))
   }
+  fs.writeFileSync('./tt-charts/js/thirdparty/jquery-1.10.2.min.js',        fs.readFileSync(__dirname + '/assets/js/thirdparty/jquery-1.10.2.min.js'))
+  fs.writeFileSync('./tt-charts/js/thirdparty/miso.ds.deps.ie.0.4.1.js',    fs.readFileSync(__dirname + '/assets/js/thirdparty/miso.ds.deps.ie.0.4.1.js'))
+  fs.writeFileSync('./tt-charts/js/thirdparty/highcharts.js',               fs.readFileSync(__dirname + '/assets/js/thirdparty/highcharts.js'))
+  fs.writeFileSync('./tt-charts/js/thirdparty/jquery.all-my-charts.js',     fs.readFileSync(__dirname + '/assets/js/thirdparty/jquery.all-my-charts.js'))
+  fs.writeFileSync('./tt-charts/js/thirdparty/d3.v3.min.js',                fs.readFileSync(__dirname + '/assets/js/thirdparty/d3.v3.min.js'))
+  fs.writeFileSync('./tt-charts/js/thirdparty/timeseries.js',               fs.readFileSync(__dirname + '/assets/js/thirdparty/timeseries.js'))
   
   fs.writeFileSync('./tt-charts/'+dir+'/'+name+'.' + ((dir == 'data') ? 'json' : 'css'), JSON.stringify(data));
 
 }
-function createIndexFile(script){
-
-  var page = htmlTemplateFactory({script: script});
+function createIndexFile(divs, script){
+  var page = htmlTemplateFactory({divs: divs, script: script});
   fs.writeFileSync('./tt-charts/index.html', html.prettyPrint(page, {indent_size: 2}));
 
 }
