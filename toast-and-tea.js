@@ -2,6 +2,8 @@ var fs          = require('fs'),
     html        = require('html'),
     js_beautify = require('js-beautify').js_beautify,
 		connect     = require('connect'),
+    sequel      = require('./libs/sequel.js'),
+    ss          = require('simple-statistics'),
     _           = require('underscore');
 
 
@@ -16,9 +18,6 @@ var fs          = require('fs'),
 // Code to turn javascript in node into a flat file
 var jsff = {
   htmlTemplateFactory: _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><%= divs %><script src="js/thirdparty/jquery-1.10.2.min.js"></script><script src="js/thirdparty/d3.v3.min.js"></script><script src="js/thirdparty/highcharts.js"></script><script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script><script src="js/thirdparty/jquery.all-my-charts.js"></script><%= libs %><script><%= scripts %></script></body></html>'),
-  waitForCharts: function(){
-    
-  },
   jsToFlatFile: function(){
     jsff.writeDataToFile(arguments);
     var libs    = jsff.appendJsLibs(arguments);
@@ -147,9 +146,9 @@ var jsff = {
 
 }
 
-
 module.exports = {
-  load: jsff.waitForCharts,
-  loadSync: jsff.jsToFlatFile,
-  chart: jsff.createChartObject
+  load:  jsff.jsToFlatFile,
+  chart: jsff.createChartObject,
+  sql:   sequel,
+  stats: ss
 }

@@ -1,4 +1,4 @@
-var tt         = require('./../toast-and-tea.js');
+var tt = require('./../toast-and-tea.js');
 
 var data = [
 	{
