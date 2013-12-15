@@ -8,11 +8,11 @@ var sp500 = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 var area_chart_1 = function() {
 	return tt.chart()
            .data('sp500', sp500)
-           .desc('This chart is great');
+           .scripts('js/timeseries.js');
 
 	var formatDate = d3.time.format("%b %Y");
 
-	d3.select('body')
+	d3.select('#chart1')
 		.datum(sp500)
   .call(timeSeriesChart()
     .x(function(d) { return formatDate.parse(d.date); })

@@ -5,14 +5,19 @@
   </head>
   
   <body>
+    <div id="chart1" class="chart"></div>
+    <script src="js/thirdparty/jquery-1.10.2.min.js"></script>
     <script src="js/thirdparty/d3.v3.min.js"></script>
+    <script src="js/thirdparty/highcharts.js"></script>
+    <script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script>
+    <script src="js/thirdparty/jquery.all-my-charts.js"></script>
     <script src="js/timeseries.js"></script>
     <script>
       (function() {
-        d3.json("./data/sp500.json", function(error, sp500) {
+        $.getJSON("./data/sp500.json", function(sp500) {
           var formatDate = d3.time.format("%b %Y");
       
-          d3.select('body')
+          d3.select('#chart1')
             .datum(sp500)
             .call(timeSeriesChart()
               .x(function(d) {

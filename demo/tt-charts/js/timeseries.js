@@ -30,10 +30,10 @@ function timeSeriesChart() {
           .range([height - margin.top - margin.bottom, 0]);
 
       // Select the svg element, if it exists.
-      var svg = d3.select(this).append('svg').data([data]);
+      var svg = d3.select(this).selectAll("svg").data([data]);
 
       // Otherwise, create the skeletal chart.
-      var gEnter = svg.append("g");
+      var gEnter = svg.enter().append("svg").append("g");
       gEnter.append("path").attr("class", "area");
       gEnter.append("path").attr("class", "line");
       gEnter.append("g").attr("class", "x axis");
