@@ -6,14 +6,19 @@ var fs          = require('fs'),
 
 
 /* TODO
+- allow for .load to be called asynchronously and only load after all are done.
 - integrate sequel library
 - turn chart() into highchart(), d3(), basic() methods
+- allow for tt.port() to specify a new port
 
 */
 
 // Code to turn javascript in node into a flat file
 var jsff = {
   htmlTemplateFactory: _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><%= divs %><script src="js/thirdparty/jquery-1.10.2.min.js"></script><script src="js/thirdparty/d3.v3.min.js"></script><script src="js/thirdparty/highcharts.js"></script><script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script><script src="js/thirdparty/jquery.all-my-charts.js"></script><%= libs %><script><%= scripts %></script></body></html>'),
+  waitForCharts: function(){
+    
+  },
   jsToFlatFile: function(){
     jsff.writeDataToFile(arguments);
     var libs    = jsff.appendJsLibs(arguments);
@@ -21,7 +26,9 @@ var jsff = {
     var scripts = jsff.appendJs(arguments);
     jsff.createIndexFile(divs, libs, scripts);
     jsff.startServer();
+    return this
   },
+  port: 8889,
   createChartObject: function(){
     var description = '',
         data_name   = '',
@@ -51,10 +58,10 @@ var jsff = {
 
     return chart;
   },
-  writeDataToFile: function(arguments){
+  writeDataToFile: function(args){
     var createFolderStructure_once = _.once(jsff.createFolderStructure);
 
-    _.each(arguments, function(fn){ 
+    _.each(args, function(fn){ 
       var data_info   = fn().data(),
           data_name   = data_info.name,
           data_object = data_info.data;
@@ -69,15 +76,15 @@ var jsff = {
 
     fs.writeFileSync('./tt-charts/js/' + file_name, lib);
   },
-  findUniqueLibs: function(arguments){
+  findUniqueLibs: function(args){
     var uniq_libs = [];
-    _.each(arguments, function(fn){
+    _.each(args, function(fn){
       uniq_libs.push(fn().scripts())
     });
     return _.uniq(_.flatten(uniq_libs));
   },
-  appendJsLibs: function(arguments){
-    var uniq_libs = jsff.findUniqueLibs(arguments);
+  appendJsLibs: function(args){
+    var uniq_libs = jsff.findUniqueLibs(args);
     var libs = _.map(uniq_libs, function(lib){
       jsff.writeJsLibs(lib)
       return '<script src="' + lib + '"></script>'
@@ -85,8 +92,8 @@ var jsff = {
 
     return libs;
   },
-  prependTargetDivs: function(arguments){
-    var divs = _.map(arguments, function(fn){ 
+  prependTargetDivs: function(args){
+    var divs = _.map(args, function(fn){ 
       var selector  = fn.toString().match(/(^.*\.allMyCharts|d3.select.*\))/m)[0].match(/(\'|\").+(\'|\")/)[0].replace(/(\'|\")/g, ''),
           prefix    = ((selector[0] == '.') ? 'class' : 'id'),
           div = ''
@@ -100,8 +107,8 @@ var jsff = {
 
     return divs;
   },
-  appendJs: function(arguments){
-    var scripts = _.map(arguments, function(fn){ 
+  appendJs: function(args){
+    var scripts = _.map(args, function(fn){ 
       var data_name = fn().data().name,
           fn_string = fn.toString()
                         .replace(/\.chart\(\)\n*((\s*\..*\n)+)/, '')
@@ -132,17 +139,17 @@ var jsff = {
     fs.writeFileSync('./tt-charts/index.html', html.prettyPrint(page, {indent_size: 2}));
 
   },
-  startServer: function(port){
-  	port = ((port) ? port : 8080);
+  startServer: function(){
   	var app = connect().use(connect.static('./tt-charts'));
-  	app.listen(port);
-  	console.log('Running on 0.0.0.0:' + port)
+  	app.listen(jsff.port);
+  	console.log('Running on 0.0.0.0:' + jsff.port)
   }
 
 }
 
 
 module.exports = {
-  load: jsff.jsToFlatFile,
+  load: jsff.waitForCharts,
+  loadSync: jsff.jsToFlatFile,
   chart: jsff.createChartObject
 }

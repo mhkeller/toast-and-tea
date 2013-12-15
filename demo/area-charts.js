@@ -44,4 +44,4 @@ var area_chart_2 = function() {
 
 }
 
-tt.load(area_chart_1, area_chart_2)
+tt.load(area_chart_1, area_chart_2);
