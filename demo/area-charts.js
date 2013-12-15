@@ -7,7 +7,7 @@ var sp500 = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 var area_chart_1 = function() {
 	return tt.chart()
            .data('sp500', sp500)
-           .scripts('js/timeseries.js');
+           .scripts('js/timeseries.js'); // Note, you only need to include these libraries once
 
 	var formatDate = d3.time.format("%b %Y");
 

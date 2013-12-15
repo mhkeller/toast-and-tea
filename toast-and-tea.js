@@ -39,7 +39,7 @@ var jsff = {
 
     chart.scripts = function(value) {
       if (!arguments.length) return scripts;
-      scripts = arguments;
+      scripts = _.values(arguments);
       return chart;
     };
 
@@ -69,15 +69,20 @@ var jsff = {
 
     fs.writeFileSync('./tt-charts/js/' + file_name, lib);
   },
+  findUniqueLibs: function(arguments){
+    var uniq_libs = [];
+    _.each(arguments, function(fn){
+      uniq_libs.push(fn().scripts())
+    });
+    return _.uniq(_.flatten(uniq_libs));
+  },
   appendJsLibs: function(arguments){
-    var libs = _.map(arguments, function(fn){ 
-      var fn_libs = _.map(fn().scripts(), function(fn_lib){
-        jsff.writeJsLibs(fn_lib)
-        return '<script src="' + fn_lib + '"></script>'
-      }).join('');
-
-      return fn_libs
+    var uniq_libs = jsff.findUniqueLibs(arguments);
+    var libs = _.map(uniq_libs, function(lib){
+      jsff.writeJsLibs(lib)
+      return '<script src="' + lib + '"></script>'
     }).join('');
+
     return libs;
   },
   prependTargetDivs: function(arguments){
