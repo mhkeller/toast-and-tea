@@ -6,11 +6,13 @@
   
   <body>
     <div id="chart1" class="chart"></div>
+    <div id="chart2" class="chart"></div>
     <script src="js/thirdparty/jquery-1.10.2.min.js"></script>
     <script src="js/thirdparty/d3.v3.min.js"></script>
     <script src="js/thirdparty/highcharts.js"></script>
     <script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script>
     <script src="js/thirdparty/jquery.all-my-charts.js"></script>
+    <script src="js/timeseries.js"></script>
     <script src="js/timeseries.js"></script>
     <script>
       (function() {
@@ -25,6 +27,25 @@
               })
               .y(function(d) {
                 return +d.price;
+              }))
+            .on('mouseover', function(d) {
+              console.log(d)
+            });
+      
+        })
+      })();
+      (function() {
+        $.getJSON("./data/spRandom.json", function(spRandom) {
+          var formatDate = d3.time.format("%b %Y");
+      
+          d3.select('#chart2')
+            .datum(spRandom)
+            .call(timeSeriesChart()
+              .x(function(d) {
+                return formatDate.parse(d.date);
+              })
+              .y(function(d) {
+                return d.price
               }))
             .on('mouseover', function(d) {
               console.log(d)

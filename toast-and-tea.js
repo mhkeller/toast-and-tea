@@ -6,8 +6,6 @@ var fs          = require('fs'),
 
 
 /* TODO
-- pass arguments array to the different libraries as opposed to checking whether it's a function or an array
-- Finish allowing for external scripts
 - integrate sequel library
 - turn chart() into highchart(), d3(), basic() methods
 
@@ -16,7 +14,7 @@ var fs          = require('fs'),
 // Code to turn javascript in node into a flat file
 var jsff = {
   htmlTemplateFactory: _.template('<html><head><link rel="stylesheet" type="text/css" href="css/chart.css"></head><body><%= divs %><script src="js/thirdparty/jquery-1.10.2.min.js"></script><script src="js/thirdparty/d3.v3.min.js"></script><script src="js/thirdparty/highcharts.js"></script><script src="js/thirdparty/miso.ds.deps.ie.0.4.1.js"></script><script src="js/thirdparty/jquery.all-my-charts.js"></script><%= libs %><script><%= scripts %></script></body></html>'),
-  jsToFlatFile: function(chart_fns){
+  jsToFlatFile: function(){
     jsff.writeDataToFile(arguments);
     var libs    = jsff.appendJsLibs(arguments);
     var divs    = jsff.prependTargetDivs(arguments);
@@ -86,7 +84,11 @@ var jsff = {
     var divs = _.map(arguments, function(fn){ 
       var selector  = fn.toString().match(/(^.*\.allMyCharts|d3.select.*\))/m)[0].match(/(\'|\").+(\'|\")/)[0].replace(/(\'|\")/g, ''),
           prefix    = ((selector[0] == '.') ? 'class' : 'id'),
-          div       = '<div ' + prefix + '="' + ((selector != 'body' && selector != 'html') ? selector.slice(1) : selector) + ((prefix != 'id') ? ' chart' : '" class="chart') + '"></div>';
+          div = ''
+
+      if (selector != 'body' && selector != 'html'){
+        div = '<div ' + prefix + '="' + selector.slice(1) + ((prefix != 'id') ? ' chart' : '" class="chart') + '"></div>';
+      };
 
       return div;
     }).join('');

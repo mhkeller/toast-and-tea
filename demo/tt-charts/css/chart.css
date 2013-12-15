@@ -40,6 +40,6 @@ label {
 }
 .chart{
   width: 100% !important;
-  height: 525px !important;
+  min-height: 245px !important;
   margin-bottom: 50px;
 }

@@ -4,7 +4,6 @@ var fs         = require('fs'),
 
 var sp500 = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 
-
 var area_chart_1 = function() {
 	return tt.chart()
            .data('sp500', sp500)
@@ -21,18 +20,28 @@ var area_chart_1 = function() {
 
 }
 
-// var area_chart_2 = function() {
-// 	return {sp500: sp500};
+var spRandom = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 
-// 	var formatDate = d3.time.format("%b %Y");
+// Introduce some noise to this dataset
+spRandom.forEach(function(d){
+	d.price = +d.price * Math.random();
+})
 
-// 	d3.select('body')
-// 		.datum(sp500)
-//   .call(timeSeriesChart()
-//     .x(function(d) { return formatDate.parse(d.date); })
-//     .y(function(d) { return +d.other; }))
-//   	.on('mouseover', function(d){console.log(d)});
 
-// }
+var area_chart_2 = function() {
+	return tt.chart()
+           .data('spRandom', spRandom)
+           .scripts('js/timeseries.js');
 
-tt.load(area_chart_1)
+	var formatDate = d3.time.format("%b %Y");
+
+	d3.select('#chart2')
+		.datum(spRandom)
+  .call(timeSeriesChart()
+    .x(function(d) { return formatDate.parse(d.date); })
+    .y(function(d) { return d.price }))
+  	.on('mouseover', function(d){console.log(d)});
+
+}
+
+tt.load(area_chart_1, area_chart_2)
