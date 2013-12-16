@@ -1,4 +1,5 @@
 var fs          = require('fs'),
+    dsv         = require('dsv'),
     html        = require('html'),
     js_beautify = require('js-beautify').js_beautify,
 		connect     = require('connect'),
@@ -14,6 +15,25 @@ var fs          = require('fs'),
 - allow for tt.port() to specify a new port
 
 */
+
+var readers = {
+  readCsv: function(path, cb){
+    fs.readFile(path, 'utf8', function(err, data){
+      cb(err, dsv.csv.parse(data));    
+    })
+  },
+  readCsvSync: function(path){
+    return dsv.csv.parse(fs.readFileSync(path, 'utf8'));
+  },
+  readJson: function(path, cb){
+    fs.readFile(path, function(err, data){
+      cb(err, JSON.parse(data));
+    })
+  },
+  readJsonSync: function(path){
+    return JSON.parse(fs.readFileSync(path));
+  }
+}
 
 // Code to turn javascript in node into a flat file
 var jsff = {
@@ -150,5 +170,9 @@ module.exports = {
   load:  jsff.jsToFlatFile,
   chart: jsff.createChartObject,
   sql:   sequel,
-  stats: ss
+  stats: ss,
+  readCsv: readers.readCsv,
+  readCsvSync: readers.readCsvSync,
+  readJson: readers.readJson,
+  readJsonSync: readers.readJsonSync
 }
