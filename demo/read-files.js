@@ -1,17 +1,17 @@
 var tt = require('../toast-and-tea.js');
 
 
-tt.readCsv('data/sp500.csv', function(err, data){
+tt.readCsvAsync('data/sp500.csv', function(err, data){
 	console.log(data[0])
 });
 
-var csvSync = tt.readCsvSync('data/sp500.csv');
+var csvSync = tt.readCsv('data/sp500.csv');
 console.log(csvSync[0])
 
 
-tt.readJson('data/cities.json', function(err, data){
+tt.readJsonAsync('data/cities.json', function(err, data){
 	console.log(data[0])
 })
 
-var jsonSync = tt.readJsonSync('data/cities.json');
+var jsonSync = tt.readJson('data/cities.json');
 console.log(jsonSync[0])

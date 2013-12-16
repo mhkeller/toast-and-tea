@@ -16,20 +16,20 @@ var fs          = require('fs'),
 */
 
 var readers = {
-  readCsv: function(path, cb){
+  readCsvAsync: function(path, cb){
     fs.readFile(path, 'utf8', function(err, data){
       cb(err, dsv.csv.parse(data));    
     })
   },
-  readCsvSync: function(path){
+  readCsv: function(path){
     return dsv.csv.parse(fs.readFileSync(path, 'utf8'));
   },
-  readJson: function(path, cb){
+  readJsonAsync: function(path, cb){
     fs.readFile(path, function(err, data){
       cb(err, JSON.parse(data));
     })
   },
-  readJsonSync: function(path){
+  readJson: function(path){
     return JSON.parse(fs.readFileSync(path));
   }
 }
@@ -170,8 +170,8 @@ module.exports = {
   chart: jsff.createChartObject,
   sql:   sequel,
   stats: ss,
+  readCsvAsync: readers.readCsvAsync,
   readCsv: readers.readCsv,
-  readCsvSync: readers.readCsvSync,
-  readJson: readers.readJson,
-  readJsonSync: readers.readJsonSync
+  readJsonAsync: readers.readJsonAsync,
+  readJson: readers.readJson
 }
