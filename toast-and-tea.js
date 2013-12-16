@@ -2,7 +2,7 @@ var fs          = require('fs'),
     html        = require('html'),
     js_beautify = require('js-beautify').js_beautify,
 		connect     = require('connect'),
-    sequel      = require('./libs/sequel.js'),
+    sequel      = require('../sequel/sequel.js'),
     ss          = require('simple-statistics'),
     _           = require('underscore');
 
