@@ -11,8 +11,8 @@ var fs          = require('fs'),
 /* TODO
 - allow for .load to be called asynchronously and only load after all are done.
 - turn chart() into highchart(), d3(), basic() methods
+- all for custom methods via config file
 - allow for tt.port() to specify a new port
-
 */
 
 var readers = {
