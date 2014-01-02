@@ -7,7 +7,7 @@ var sp500 = d3.csv.parse(fs.readFileSync('data/sp500.csv').toString());
 var area_chart_1 = function() {
 	return tt.chart()
            .data('sp500', sp500)
-           .scripts('js/timeseries.js'); // Note, you only need to include these libraries once
+           .scripts('js/timeseries.js'); // Note, you only need to include a script once and it will work for all chart instances.
 
 	var formatDate = d3.time.format("%b %Y");
 
@@ -30,8 +30,7 @@ spRandom.forEach(function(d){
 
 var area_chart_2 = function() {
 	return tt.chart()
-           .data('spRandom', spRandom)
-           .scripts('js/timeseries.js');
+           .data('spRandom', spRandom);
 
 	var formatDate = d3.time.format("%b %Y");
 
