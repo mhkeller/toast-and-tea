@@ -36,7 +36,7 @@ var readers = {
 
 // Code to turn javascript in node into a flat file
 var jsff = {
-  htmlTemplateFactory: _.template(fs.readFileSync('assets/index.html', 'utf8')),
+  htmlTemplateFactory: _.template(fs.readFileSync(__dirname + '/assets/index.html', 'utf8')),
   jsToFlatFile: function(){
     jsff.writeDataToFile(arguments);
     var libs    = jsff.appendJsLibs(arguments);
