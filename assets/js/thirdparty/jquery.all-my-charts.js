@@ -1,7 +1,7 @@
 (function ( $ ) {
 
   $.fn.allMyCharts = function ( options , callback) {
-    var chart_settings = $.extend({
+     var chart_settings = $.extend({
         // These are the defaults.
         data_format: 'json',
         delimiter: ',',
@@ -15,7 +15,8 @@
         color_palette: ['#1f77b4', '#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf','#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5', '#c49c94', '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5'],
         min_datetick_interval: 0, // To not let the day go less than a day use 24 * 3600 * 1000
         binning: 'jenks',
-        steps: 15
+        steps: 15,
+        y_limit: null
       }, options ),
       response_ds;
 
@@ -293,15 +294,14 @@
 
     var hist = {
       createHistogram: function(data, chart_settings, $ctnr, json_chart_callback){
-        // try{
+        try{
           data = data.column(chart_settings.x).data;
           this.drawHighChart( this.constructHistData(data, chart_settings), chart_settings, $ctnr );
           json_chart_callback('Chart created');
-        // }
-        // catch(err){
-        //   console.log(err)
-        //   alert("Error: Try selecting fewer bins or smaller breaks.");
-        // }
+        }
+        catch(err){
+          alert("Error: Try selecting fewer bins or smaller breaks.");
+        }
       },
       constructHistData: function(data, settings){
         var bin_info     = this.createBinsAndXAxis(data, settings.binning, settings.steps),
@@ -398,6 +398,7 @@
             }
           },
           yAxis: {
+            max: chart_settings.y_limit,
             title: {
               text: 'Count',
               style: {
@@ -590,15 +591,16 @@
           },
           xAxis: x_axis_info,
           yAxis: {
-              title: {
-                  text: chart_settings.y_axis_label,
-                  style: {
-                    color:'#5e5e5e',
-                    font: 'normal 16px "Arial", sans-serif'
-                }
-              },
-              gridLineWidth: 1,
-              gridLineColor: '#e3e3e3'
+            max: chart_settings.y_limit,
+            title: {
+                text: chart_settings.y_axis_label,
+                style: {
+                  color:'#5e5e5e',
+                  font: 'normal 16px "Arial", sans-serif'
+              }
+            },
+            gridLineWidth: 1,
+            gridLineColor: '#e3e3e3'
           },
           tooltip: {
               formatter: function() {
@@ -629,7 +631,7 @@
     function startTheShow(chart_settings, $ctnr, cb){
       chartLoading($ctnr);
       createAndFetchDs(chart_settings, $ctnr, function(response){
-        if (cb){
+        if(cb){
           callback(response); /* "Chart created" */
         }
       });
