@@ -1,6 +1,12 @@
 # Toast and tea
 
-A node.js library to make data sketches that output to the browser.
+A node.js library to make charts an graphs that output to the browser.
+
+#### [Check out some of the demos](https://github.com/mhkeller/toast-and-tea/tree/master/demo).
+
+
+
+
 
 #### TODO
 * Render description from chart options.
